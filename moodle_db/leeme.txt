@@ -1,0 +1,7 @@
+Crear una carpetas
+
+1) ./data ( Volumen de base de datos )
+
+Al reconstruir contenedor (ej. docker-compose build moodle_db ) se debe:
+    -   Eliminar si no deseas recuperar la base de datos
+    -   Cambiar permisos a usuario de tu maquina si deseas mantener la base de datos

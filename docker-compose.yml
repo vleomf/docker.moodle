@@ -1,0 +1,51 @@
+# Dockerfile para crear imagen de MOODLE.
+# Este archivo es solo para desarrollo.
+# Para crear una nueva imagen hacer ...
+#     docker build -t viceo/moodle:[version] .
+# en directorio moodle_www
+
+# La imagen está configurada para trabajar con una Base de Datos externa.
+
+version: '3'
+
+# Definicion de Subnet
+networks: 
+  moodle_net:
+    external: true
+
+# Definicion de servicios
+services:
+  # Servicio Moodle DB
+  moodle_db:
+    # Configuracion de red
+    networks: 
+      moodle_net:
+        ipv4_address: 192.168.1.2
+    # Cargar Dockerfile del servicio
+    build: ./moodle_db
+    # Configuracion de volumen persistente
+    volumes:
+      - ./moodle_db/data:/var/lib/mysql
+    # Politica de reinicio
+    restart: unless-stopped
+
+  # Servicio Moodle
+  moodle:
+    # Configuracion de red
+    networks: 
+      moodle_net:
+        ipv4_address: 192.168.1.3
+    # Configuracion de hosts
+    extra_hosts:
+      moodle_db: 192.168.1.2
+    # Cargar Dockerfile del servicio
+    build: ./moodle_www
+    # Configuracion de volumenes persistentes
+    # volumes: 
+    #   - ./moodle_www/www:/var/www/html
+    #   - ./moodle_www/data:/var/www/moodledata
+    # Politica de reinicio
+    restart: unless-stopped
+    # Forwardeo puertos externo:interno
+    ports: 
+      - 8080:80
